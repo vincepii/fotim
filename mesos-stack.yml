@@ -1,0 +1,42 @@
+---
+
+- hosts: all
+  become: yes
+  vars_files:
+    - vars/main.yml
+  tasks:
+    - name: sets the default gateway so that "ansible_default_ipv4" will be the right interface
+      command: bash -c "if [ $(route -n | grep {{ default_gw }} | wc -l) -gt 0 ]; then echo "skip"; else route add default gateway {{ default_gw }} && route delete default gw 10.0.2.2; fi"
+
+- hosts: all
+  become: yes
+  roles:
+    - ansible-docker
+
+- hosts:
+   - zookeeper
+  become: yes
+  roles:
+    - ansible-zookeeper
+
+- hosts:
+   - mesos-masters
+  vars:
+    mesos_install_mode: "master"
+  become: yes
+  roles:
+    - ansible-mesos
+
+- hosts:
+   - mesos-slaves
+  vars:
+    mesos_install_mode: "slave"
+  become: yes
+  roles:
+    - ansible-mesos
+
+- hosts:
+   - mesos-masters
+  become: yes
+  roles:
+    - ansible-marathon

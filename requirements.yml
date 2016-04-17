@@ -1,0 +1,4 @@
+- src: https://github.com/AnsibleShipyard/ansible-zookeeper.git
+- src: https://github.com/AnsibleShipyard/ansible-mesos.git
+- src: https://github.com/AnsibleShipyard/ansible-marathon.git
+- src: https://github.com/AnsibleShipyard/ansible-docker.git
