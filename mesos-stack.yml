@@ -11,13 +11,23 @@
 - hosts: all
   become: yes
   roles:
-    - ansible-docker
+    - {role: ansible-docker, tags: [ 'docker', ] }
 
 - hosts:
    - zookeeper
   become: yes
+  tasks:
+    - name: create zookeeper hosts list of dictionaries
+      vars:
+        zkh: []
+      set_fact:
+        zkh: "{{ zkh + [ {'host': item.1, 'id': item.0} ] }}"
+      with_indexed_items: "{{ groups.zookeeper }}"
+    - debug: msg="{{zkh}}"
   roles:
-    - ansible-zookeeper
+    - {role: ansible-zookeeper, zookeeper_hosts: "{{ zkh }}" }
+  tags:
+    - test
 
 - hosts:
    - mesos-masters
